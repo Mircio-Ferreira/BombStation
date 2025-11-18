@@ -24,9 +24,9 @@
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 // --Definindo pinos de leds
-#define LEN_KEY_0 0
-#define LEN_KEY_1 1
-#define LEN_KEY_2 2
+#define LEN_KEY_0 2
+#define LEN_KEY_1 3
+#define LEN_KEY_2 4
 
 // Butao de reset
 #define BUTTON_PIN 7
@@ -44,6 +44,8 @@ void resetKeys(); //reseta keys
 
 void printKeys(); // Imprimir no serial estado dos vetores
 
+void update_leds();
+
 void setup() {
   Serial.begin(9600);
   SPI.begin();
@@ -60,6 +62,9 @@ void setup() {
 unsigned long lastPrint = 0;
 
 void loop() {
+
+  update_leds();
+
   // Imprime o estado das chaves a cada 2 segundos
   if (millis() - lastPrint >= 2000) {
     printKeys();
@@ -116,6 +121,16 @@ void resetKeys() {
     Keys_not_used[i]=Keys_original[i];
   }
   Serial.println("Vetores de chaves resetadas");
+}
+
+// --Funcao para atualiza estado de leds
+
+void update_leds(){
+  for(int i=0; i<LEN_KEY; i++){
+    int pin=i+2;
+    if(Keys_not_used[i]!=NULL) digitalWrite(pin, HIGH);
+    else digitalWrite(pin, LOW);
+  }
 }
 
 // ---------- Imprime o estado dos vetores ----------
