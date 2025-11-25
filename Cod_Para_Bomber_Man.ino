@@ -18,6 +18,7 @@
 #include <SPI.h>
 #include <MFRC522.h>
 #include <Keyboard.h>
+#include <string.h>
 
 
 #define SS_PIN 10
@@ -29,15 +30,16 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 #define LEN_KEY_0 2
 #define LEN_KEY_1 3
 #define LEN_KEY_2 4
+#define LEN_KEY_3 5
 
 // Butao de reset
 #define BUTTON_PIN 7
 
 // Vetores contendo strings (char*)
-#define LEN_KEY 3
-const char* Keys_original[LEN_KEY] = {"B5F821", "99FC77A","BDF6CECE"};
-char* Keys_not_used[LEN_KEY] = {"B5F821", "99FC77A","BDF6CECE"};
-char* Keys_used[LEN_KEY]     = {NULL, NULL};
+#define LEN_KEY 4
+const char* Keys_original[LEN_KEY] = {"B5F821", "99FC77A","BDF6CECE","72EF80"};
+char* Keys_not_used[LEN_KEY] = {"B5F821", "99FC77A","BDF6CECE","72EF80"};
+char* Keys_used[LEN_KEY]     = {NULL, NULL,NULL,NULL};
 
 
 void moveKey(const char* key); //funcao de mover chaves
@@ -61,6 +63,8 @@ void setup() {
   pinMode(LEN_KEY_0, OUTPUT);
   pinMode(LEN_KEY_1, OUTPUT);
   pinMode(LEN_KEY_2, OUTPUT);
+  pinMode(LEN_KEY_3, OUTPUT);
+
 
   //Inicializando teclado
   Keyboard.begin();
@@ -115,6 +119,10 @@ void applayKeys(int idx){
 // ---------- Função para mover chave ----------
 void moveKey(const char* key) {
   for (int i = 0; i < LEN_KEY; i++) {
+    if((Keys_not_used[i] != NULL && strcmp(Keys_not_used[3], key) == 0)){
+      resetKeys();
+      break;
+    }
     if (Keys_not_used[i] != NULL && strcmp(Keys_not_used[i], key) == 0) {
       Keys_used[i] = Keys_not_used[i]; // mesma posição
       Keys_not_used[i] = NULL;
