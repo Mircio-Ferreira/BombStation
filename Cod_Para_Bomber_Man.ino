@@ -120,7 +120,10 @@ void applayKeys(int idx){
 void moveKey(const char* key) {
   for (int i = 0; i < LEN_KEY; i++) {
     if((Keys_not_used[i] != NULL && strcmp(Keys_not_used[3], key) == 0)){
+      digitalWrite(LEN_KEY_3,LOW);
+      delay(400);
       resetKeys();
+      digitalWrite(LEN_KEY_3,HIGH);
       break;
     }
     if (Keys_not_used[i] != NULL && strcmp(Keys_not_used[i], key) == 0) {
