@@ -19,12 +19,28 @@
 #include <MFRC522.h>
 #include <Keyboard.h>
 #include <string.h>
+#include <Adafruit_NeoPixel.h>
 
 
 #define SS_PIN 10
 #define RST_PIN 9
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+//Pino da led circular
+
+
+#define PIN_LED_RGB 7
+#define NUM_LED 12
+#define LEDS_POR_CHAVE 3
+Adafruit_NeoPixel pixels(NUM_LED, PIN_LED_RGB, NEO_GRB + NEO_KHZ800);
+
+uint32_t cores[] = {
+  pixels.Color(255, 0, 0),    // bloco 0 = vermelho
+  pixels.Color(0, 255, 0),    // bloco 1 = verde
+  pixels.Color(0, 0, 255),    // bloco 2 = azul
+  pixels.Color(255, 150, 0),  // bloco 3 = laranja
+};
 
 // --Definindo pinos de leds
 #define LEN_KEY_0 2
@@ -36,10 +52,10 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 #define BUTTON_PIN 7
 
 // Vetores contendo strings (char*)
-#define LEN_KEY 4
-const char* Keys_original[LEN_KEY] = {"B5F821", "99FC77A","BDF6CECE","72EF80"};
-char* Keys_not_used[LEN_KEY] = {"B5F821", "99FC77A","BDF6CECE","72EF80"};
-char* Keys_used[LEN_KEY]     = {NULL, NULL,NULL,NULL};
+#define LEN_KEY 5
+const char* Keys_original[LEN_KEY] = {"B5F821", "99FC77A","BD6DF1F1","DDDA52F2","72EF80"};
+char* Keys_not_used[LEN_KEY] = {"B5F821", "99FC77A","BD6DF1F1","DDDA52F2","72EF80"};
+char* Keys_used[LEN_KEY]     = {NULL, NULL,NULL,NULL,NULL};
 
 
 void moveKey(const char* key); //funcao de mover chaves
@@ -49,6 +65,7 @@ void resetKeys(); //reseta keys
 void printKeys(); // Imprimir no serial estado dos vetores
 
 void update_leds();
+
 
 void applayKeys(int idx);
 
@@ -68,13 +85,15 @@ void setup() {
 
   //Inicializando teclado
   Keyboard.begin();
+  //INICIALIZA LEDS
+  pixels.begin();
 
 }
 
 unsigned long lastPrint = 0;
 
 void loop() {
-
+  
   update_leds();
 
   // Imprime o estado das chaves a cada 2 segundos
@@ -119,7 +138,7 @@ void applayKeys(int idx){
 // ---------- Função para mover chave ----------
 void moveKey(const char* key) {
   for (int i = 0; i < LEN_KEY; i++) {
-    if((Keys_not_used[i] != NULL && strcmp(Keys_not_used[3], key) == 0)){
+    if((Keys_not_used[i] != NULL && strcmp(Keys_not_used[4], key) == 0)){
       digitalWrite(LEN_KEY_3,LOW);
       delay(400);
       resetKeys();
@@ -138,21 +157,79 @@ void moveKey(const char* key) {
 // ------- Função para reseta as chaves
 
 void resetKeys() {
-  for(int i =0 ; i<LEN_KEY ;i++){
-    Keys_used[i]=NULL;
-    Keys_not_used[i]=Keys_original[i];
+
+  // 1. Reset das chaves
+  for (int i = 0; i < LEN_KEY; i++) {
+    Keys_used[i] = NULL;
+    Keys_not_used[i] = Keys_original[i];
+
+    int pin = i + 2;
+    digitalWrite(pin, LOW); // apaga LEDs simples
   }
-  Serial.println("Vetores de chaves resetadas");
+
+  // 2. Apagar toda a fita RGB
+  pixels.clear();
+  pixels.show();
+  delay(300); // tempo antes de começar a animação
+
+  // 3. Acender LED por LED com as cores mapeadas
+  for (int bloco = 0; bloco < LEN_KEY; bloco++) {
+
+    uint32_t cor = cores[bloco];  // cor do bloco atual
+
+    int inicio = bloco * LEDS_POR_CHAVE;
+    int fim = inicio + LEDS_POR_CHAVE;
+
+    // acende LEDs desse bloco um por um
+    for (int led = inicio; led < fim; led++) {
+
+      pixels.setPixelColor(led, cor);
+      pixels.show();
+      delay(150);  // tempo entre cada LED aceso (ajuste como quiser)
+    }
+  }
+
+  Serial.println("Reset completo e LEDs animadas.");
 }
+
 
 // --Funcao para atualiza estado de leds
 
-void update_leds(){
-  for(int i=0; i<LEN_KEY; i++){
-    int pin=i+2;
-    if(Keys_not_used[i]!=NULL) digitalWrite(pin, HIGH);
-    else digitalWrite(pin, LOW);
+void update_leds() {
+
+  pixels.clear(); // limpa a fita a cada atualização
+
+  for (int i = 0; i < LEN_KEY; i++) {
+
+    int pin = i + 2;
+
+    // -------------------------
+    // Controle dos LEDs comuns
+    // -------------------------
+    if (Keys_not_used[i] != NULL) {
+      digitalWrite(pin, HIGH);
+    } else {
+      digitalWrite(pin, LOW);
+    }
+
+    // -------------------------
+    // Controle da fita RGB
+    // -------------------------
+    if (Keys_not_used[i] != NULL) {
+
+      int inicio = i * LEDS_POR_CHAVE;
+      int fim = inicio + LEDS_POR_CHAVE;
+
+      // pega a cor do bloco i
+      uint32_t cor = cores[i];
+
+      for (int led = inicio; led < fim; led++) {
+        pixels.setPixelColor(led, cor);
+      }
+    }
   }
+
+  pixels.show(); // atualiza a fita
 }
 
 // ---------- Imprime o estado dos vetores ----------
@@ -174,3 +251,5 @@ void printKeys() {
   Serial.println();
   Serial.println("--------------------------------");
 }
+
+
