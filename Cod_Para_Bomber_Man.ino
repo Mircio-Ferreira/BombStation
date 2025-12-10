@@ -35,12 +35,20 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 #define LEDS_POR_CHAVE 3
 Adafruit_NeoPixel pixels(NUM_LED, PIN_LED_RGB, NEO_GRB + NEO_KHZ800);
 
+// uint32_t cores[] = {
+//   pixels.Color(255, 0, 0),    // bloco 0 = vermelho -> amarelo2
+//   pixels.Color(0, 255, 0),    // bloco 1 = verde -> vermelho
+//   pixels.Color(0, 0, 255),    // bloco 2 = azul -> verde
+//   pixels.Color(255, 150, 0),  // bloco 3 = laranja -> azul
+// };
+
 uint32_t cores[] = {
-  pixels.Color(255, 0, 0),    // bloco 0 = vermelho
-  pixels.Color(0, 255, 0),    // bloco 1 = verde
-  pixels.Color(0, 0, 255),    // bloco 2 = azul
-  pixels.Color(255, 150, 0),  // bloco 3 = laranja
+  pixels.Color(255, 150, 0),    // bloco 0 = vermelho -> amarelo2
+  pixels.Color(255, 0, 0),    // bloco 1 = verde -> vermelho
+  pixels.Color(0, 255, 0),    // bloco 2 = azul -> verde
+  pixels.Color(0, 0, 255),  // bloco 3 = laranja -> azul
 };
+
 
 // --Definindo pinos de leds
 #define LEN_KEY_0 2
@@ -53,8 +61,8 @@ uint32_t cores[] = {
 
 // Vetores contendo strings (char*)
 #define LEN_KEY 5
-const char* Keys_original[LEN_KEY] = {"B5F821", "99FC77A","BD6DF1F1","DDDA52F2","72EF80"};
-char* Keys_not_used[LEN_KEY] = {"B5F821", "99FC77A","BD6DF1F1","DDDA52F2","72EF80"};
+const char* Keys_original[LEN_KEY] = {"2361462A", "436BD126","1353152A","D32C212A","99FC77A"};
+char* Keys_not_used[LEN_KEY] = {"2361462A", "436BD126","1353152A","D32C212A","99FC77A"};
 char* Keys_used[LEN_KEY]     = {NULL, NULL,NULL,NULL,NULL};
 
 
