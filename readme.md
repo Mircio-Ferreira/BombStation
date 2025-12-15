@@ -104,5 +104,9 @@ Esta imagem apresenta o **setup completo do BombStation em funcionamento**, incl
 
 # 📷 Imagem do Arduino Leonardo
 
-![Arduino Leonardo](readme_icons\imagem_arduino_leonardo.png)
+
+<p align="center">
+  <img src="readme_icons\imagem_arduino_leonardo.png" width="400"/>
+</p>
+
 
