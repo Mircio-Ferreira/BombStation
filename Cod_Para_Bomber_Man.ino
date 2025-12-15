@@ -1,19 +1,3 @@
-/*
-   ================================
-   Ligações do RFID RC522 com Arduino UNO
-   ================================
-
-   RC522       →     Arduino UNO
-   --------------------------------
-   SDA (SS)    →     D10
-   SCK         →     D13
-   MOSI        →     D11
-   MISO        →     D12
-   RST         →     D9
-   3.3V        →     3.3V   (NÃO usar 5V!)
-   GND         →     GND
-   IRQ         →     (não usar)
-*/
 
 #include <SPI.h>
 #include <MFRC522.h>
@@ -27,7 +11,7 @@
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-//Pino da led circular
+
 
 
 #define PIN_LED_RGB 7
@@ -35,12 +19,7 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 #define LEDS_POR_CHAVE 3
 Adafruit_NeoPixel pixels(NUM_LED, PIN_LED_RGB, NEO_GRB + NEO_KHZ800);
 
-// uint32_t cores[] = {
-//   pixels.Color(255, 0, 0),    // bloco 0 = vermelho -> amarelo2
-//   pixels.Color(0, 255, 0),    // bloco 1 = verde -> vermelho
-//   pixels.Color(0, 0, 255),    // bloco 2 = azul -> verde
-//   pixels.Color(255, 150, 0),  // bloco 3 = laranja -> azul
-// };
+
 
 uint32_t cores[] = {
   pixels.Color(255, 150, 0),    // bloco 0 = vermelho -> amarelo2
@@ -143,7 +122,7 @@ void applayKeys(int idx){
 
 
 
-// ---------- Função para mover chave ----------
+
 void moveKey(const char* key) {
   for (int i = 0; i < LEN_KEY; i++) {
     if((Keys_not_used[i] != NULL && strcmp(Keys_not_used[4], key) == 0)){
@@ -162,7 +141,7 @@ void moveKey(const char* key) {
   }
 }
 
-// ------- Função para reseta as chaves
+
 
 void resetKeys() {
 
@@ -211,18 +190,13 @@ void update_leds() {
 
     int pin = i + 2;
 
-    // -------------------------
-    // Controle dos LEDs comuns
-    // -------------------------
     if (Keys_not_used[i] != NULL) {
       digitalWrite(pin, HIGH);
     } else {
       digitalWrite(pin, LOW);
     }
 
-    // -------------------------
-    // Controle da fita RGB
-    // -------------------------
+
     if (Keys_not_used[i] != NULL) {
 
       int inicio = i * LEDS_POR_CHAVE;
